@@ -2,8 +2,8 @@
 
 Group Members:
 
-*
-*
-*
+*Min Khant Aung
+*Prashorst Meas
+*Urvi Joshi
 
-Topic: 
+Topic: "What audio features are associated with song popularity on Spotify?"
