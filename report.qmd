@@ -1,5 +1,54 @@
 ---
-title: "report"
-format: html
+title: "Where and When Young Drivers Crash: Targeting Motor Premium Loadings Across Post-COVID Victoria"
+subtitle: "A business report for RACV motor underwriting"
+author:
+  - "Prashorst Meas"
+  - "Min Khant Aung"
+  - "Urvi Joshi"
+date: today
+format:
+  pdf: default
+bibliography: references.bib
+execute:
+  echo: false
+  warning: false
+  message: false
 ---
 
+```{r}
+#| label: setup
+library(tidyverse)
+library(knitr)
+
+# Load the data (filtered to 2018-2024)
+crashes_raw <- read_csv(
+  "data/victorian_road_crash_data_2018-2024.csv",
+  show_col_types = FALSE
+)
+
+# Cleaning (documented in the Methodology section)
+# Drop two artefact categories, recode placeholders to NA, type the variables.
+crashes <- crashes_raw |>
+  filter(
+    SEVERITY != "Non injury accident",
+    is.na(DTP_REGION) | DTP_REGION != "METROPOLITAN SOUTH EAST REGION"
+  ) |>
+  mutate(
+    hour         = as.integer(sub(":.*", "", ACCIDENT_TIME)),
+    SPEED_ZONE   = SPEED_ZONE |> as.character() |> na_if("Not known") |> as.integer(),
+    young_driver = YOUNG_DRIVER_18_25 > 0,
+    SEVERITY = factor(
+      SEVERITY,
+      levels = c("Fatal accident", "Serious injury accident", "Other injury accident"),
+      labels = c("Fatal", "Serious injury", "Other injury"),
+      ordered = TRUE
+    )
+  )
+
+# Sanity check for errors
+stopifnot(nrow(crashes) == 99325L)
+
+# Values used inline
+n_crashes <- nrow(crashes)
+yd_rate   <- round(mean(crashes$young_driver) * 100, 1)
+```
