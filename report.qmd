@@ -15,8 +15,13 @@ execute:
   message: false
 ---
 
+# Methodology and Data Preparation
+
 ```{r}
 #| label: setup
+#| warning: false
+#| message: false
+
 library(tidyverse)
 library(knitr)
 
@@ -52,3 +57,52 @@ stopifnot(nrow(crashes) == 99325L)
 n_crashes <- nrow(crashes)
 yd_rate   <- round(mean(crashes$young_driver) * 100, 1)
 ```
+
+\<-- Methodology part here (300 words) --\> Also need to include figure or table as assignment requirement
+
+# Results
+
+\<-- results-temporal part here –\>
+
+## Geographic results for young-driver crash analysis
+
+```{r}
+#| echo: false
+
+#| label: fig-young-driver-lga
+#| fig-cap: "Top 10 Victorian LGAs by young-driver crash involvement rate, 2018–2024."
+
+young_driver_lga <- crashes |>
+  filter(!is.na(LGA_NAME)) |>
+  group_by(LGA_NAME) |>
+  summarise(
+    total_crashes = n(),
+    young_driver_crashes = sum(young_driver),
+    young_driver_rate = young_driver_crashes / total_crashes,
+    .groups = "drop"
+  ) |>
+  filter(total_crashes >= 100) |>
+  arrange(desc(young_driver_rate)) |>
+  slice_head(n = 10)
+
+ggplot(
+  young_driver_lga,
+  aes(
+    x = reorder(LGA_NAME, young_driver_rate),
+    y = young_driver_rate
+  )
+) +
+  geom_col() +
+  coord_flip() +
+  scale_y_continuous(
+    labels = scales::percent_format()
+  ) +
+  labs(
+    x = "Local Government Area (LGA)",
+    y = "Young-driver crash involvement rate"
+  ) +
+  theme_minimal()
+
+```
+
+As shown in \@fig-young-driver-lga, young-driver crash involvement varied across Victorian Local Government Areas (LGAs) between 2018 and 2024. Hume recorded the highest proportion of crashes involving drivers aged 18–25, followed by Corangamite, Casey, and Melton, with young-driver involvement rates exceeding 30% of total crashes. Several outer metropolitan LGAs, including Casey, Whittlesea, and Wyndham, also appeared among the highest-ranked areas, suggesting elevated exposure or behavioural risk among younger drivers in growth corridors. However, differences between LGAs were relatively modest, indicating that elevated young-driver involvement is a widespread issue rather than being isolated to only a few regions. From an underwriting perspective, these findings suggest that geographic variation may provide useful contextual information for premium loading decisions, particularly when combined with driver age and time-of-day risk indicators.
