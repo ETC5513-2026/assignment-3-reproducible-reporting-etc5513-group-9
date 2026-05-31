@@ -67,7 +67,7 @@ yd_rate   <- round(mean(crashes$young_driver) * 100, 1)
 ## Geographic results for young-driver crash analysis
 
 ```{r}
-echo: false
+#| echo: false
 
 #| label: fig-young-driver-lga
 #| fig-cap: "Top 10 Victorian LGAs by young-driver crash involvement rate, 2018–2024."
