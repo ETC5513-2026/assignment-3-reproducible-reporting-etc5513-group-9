@@ -7,13 +7,25 @@ author:
   - "Urvi Joshi"
 date: today
 format:
-  pdf: default
+  pdf:
+    toc: true
+    number-sections: true
 bibliography: references.bib
 execute:
   echo: false
   warning: false
   message: false
 ---
+
+# Executive Summary
+
+\<--After all the parts are finished, write here--\>
+
+# Introduction
+
+Road crashes remain a significant public safety and financial concern across Victoria, contributing to injury, loss of life, and substantial insurance costs. Young drivers are often considered a higher-risk group due to limited driving experience and greater exposure to risky driving behaviours. Following the COVID-19 pandemic, traffic patterns and travel behaviours shifted considerably, potentially changing the spatial and temporal distribution of crash risk across the state. Understanding where and when crashes involving young drivers are more likely to occur can provide valuable insight for risk assessment and insurance decision-making.
+
+This report investigates how crash severity and young-driver involvement vary by time of day and Local Government Area (LGA) across post-COVID Victoria using Victorian Road Crash Data from 2018 to 2024. The analysis is framed from the perspective of an RACV motor underwriting analyst seeking to identify geographic and temporal risk factors relevant to premium loading decisions. Particular attention is given to young-driver involvement, crash severity, and regional variation to identify areas of elevated risk. Findings from this analysis may assist insurers in developing more targeted and evidence-based underwriting strategies.
 
 # Methodology and Data Preparation
 
@@ -105,4 +117,4 @@ ggplot(
 
 ```
 
-As shown in \@fig-young-driver-lga, young-driver crash involvement varied across Victorian Local Government Areas (LGAs) between 2018 and 2024. Hume recorded the highest proportion of crashes involving drivers aged 18–25, followed by Corangamite, Casey, and Melton, with young-driver involvement rates exceeding 30% of total crashes. Several outer metropolitan LGAs, including Casey, Whittlesea, and Wyndham, also appeared among the highest-ranked areas, suggesting elevated exposure or behavioural risk among younger drivers in growth corridors. However, differences between LGAs were relatively modest, indicating that elevated young-driver involvement is a widespread issue rather than being isolated to only a few regions. From an underwriting perspective, these findings suggest that geographic variation may provide useful contextual information for premium loading decisions, particularly when combined with driver age and time-of-day risk indicators.
+As shown in \@fig-young-driver-lga, young-driver crash involvement varied across Victorian Local Government Areas (LGAs) between 2018 and 2024. Hume recorded the highest proportion of crashes involving drivers aged 18 - 25, followed by Corangamite, Casey, and Melton, with young-driver involvement rates exceeding 30% of total crashes. Several outer metropolitan LGAs, including Casey, Whittlesea, and Wyndham, also appeared among the highest-ranked areas, suggesting elevated exposure or behavioural risk among younger drivers in growth corridors. However, differences between LGAs were relatively modest, indicating that elevated young-driver involvement is a widespread issue rather than being isolated to only a few regions. From an underwriting perspective, these findings suggest that geographic variation may provide useful contextual information for premium loading decisions, particularly when combined with driver age and time-of-day risk indicators.
