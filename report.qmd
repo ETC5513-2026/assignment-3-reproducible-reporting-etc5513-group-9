@@ -19,7 +19,7 @@ execute:
 
 # Executive Summary
 
-\<--After all the parts are finished, write here--\>
+This report investigates how crash severity and young-driver involvement vary across time of day and Local Government Areas (LGAs) in post-COVID Victoria using Victorian Road Crash Data from 2018 to 2024. Results indicate that crash frequency increases substantially during afternoon and early evening periods, while several LGAs, including Hume, Casey, and Melton, recorded comparatively higher rates of crashes involving drivers aged 18–25. Although geographic variation was moderate, findings suggest that both time-of-day and location provide useful contextual indicators of crash risk. RACV may benefit from incorporating temporal and geographic risk considerations alongside driver age when assessing motor insurance premium loading decisions.
 
 # Introduction
 
@@ -70,8 +70,6 @@ n_crashes <- nrow(crashes)
 yd_rate   <- round(mean(crashes$young_driver) * 100, 1)
 ```
 
-## Methodology
-
 ```{r}
 #| echo: false
 #| label: fig-severity-overview
@@ -105,7 +103,7 @@ key_variable_summary <- tibble::tribble(
 knitr::kable(key_variable_summary)
 ```
 
-Victorian Road Crash Data was obtained from the Victorian Department of Transport and Planning and filtered to include crashes occurring between 1 January 2018 and 31 December 2024. The dataset contains information on crash severity, location, road conditions, vehicle involvement, and demographic indicators relevant to motor insurance risk assessment. Data preparation involved removing non-injury accident records and excluding entries associated with the discontinued “Metropolitan South East Region” category to improve consistency across regional comparisons. Placeholder values, such as unknown speed zones, were recoded as missing values, while additional analytical variables were constructed, including crash hour and a binary indicator of young-driver involvement, defined as crashes involving at least one driver aged 18–25. Crash severity was also recoded into an ordered factor comprising Fatal, Serious injury, and Other injury categories.
+Victorian Road Crash Data was obtained from the Victorian Department of Transport and Planning (@viccrashdata) and filtered to include crashes occurring between 1 January 2018 and 31 December 2024. The dataset contains information on crash severity, location, road conditions, vehicle involvement, and demographic indicators relevant to motor insurance risk assessment. Data preparation involved removing non-injury accident records and excluding entries associated with the discontinued “Metropolitan South East Region” category to improve consistency across regional comparisons. Placeholder values, such as unknown speed zones, were recoded as missing values, while additional analytical variables were constructed, including crash hour and a binary indicator of young-driver involvement, defined as crashes involving at least one driver aged 18–25. Crash severity was also recoded into an ordered factor comprising Fatal, Serious injury, and Other injury categories.
 
 As shown in @fig-severity-overview, the cleaned dataset was first examined according to crash severity composition to understand the crash outcomes included in the analysis. Table @tbl-data-summary summarises the key variables used to investigate temporal and geographic crash patterns. The Results section then examines time-of-day crash patterns and Local Government Area variation in young-driver crash involvement to support RACV motor underwriting decisions.
 
@@ -188,3 +186,21 @@ ggplot(
 ```
 
 As shown in \@fig-young-driver-lga, young-driver crash involvement varied across Victorian Local Government Areas (LGAs) between 2018 and 2024. Hume recorded the highest proportion of crashes involving drivers aged 18–25, followed by Corangamite, Casey, and Melton, with young-driver involvement rates exceeding 30% of total crashes. Several outer metropolitan LGAs, including Casey, Whittlesea, and Wyndham, also appeared among the highest-ranked areas, indicating geographic variation in crashes involving young drivers. However, differences between LGAs were relatively modest, suggesting that elevated young-driver involvement occurs across multiple regions rather than being isolated to a small number of areas. From an underwriting perspective, these findings indicate that geographic context may provide useful supporting information for premium loading decisions when considered alongside driver age and temporal crash risk indicators.
+
+# Discussion
+
+The findings indicate that both temporal and geographic factors are relevant when considering crash risk involving young drivers in post-COVID Victoria. Temporal analysis showed that crash frequency increased substantially during afternoon and early evening periods, particularly during likely commuting hours, suggesting that time of day may influence overall crash exposure. Although fatal crashes remained comparatively uncommon, serious and other injury crashes followed similar temporal patterns, indicating that elevated crash activity is not limited to lower-severity incidents.
+
+Geographic analysis identified moderate variation in young-driver crash involvement across Local Government Areas (LGAs). Hume, Casey, Melton, and several outer metropolitan or regional LGAs recorded comparatively higher proportions of crashes involving drivers aged 18–25. While differences between LGAs were not extreme, the findings suggest that crash involvement among young drivers is not evenly distributed across Victoria and may vary according to local traffic conditions, demographic composition, or travel patterns.
+
+Several limitations should be acknowledged. The dataset does not include measures of traffic exposure, kilometres travelled, or behavioural factors, meaning causal explanations cannot be established. In addition, post-COVID travel behaviour may continue to evolve over time, which may influence future crash trends.
+
+# Conclusion
+
+This report examined how crash severity and young-driver involvement varied across time of day and Local Government Areas in post-COVID Victoria using Victorian Road Crash Data from 2018 to 2024. Results suggest that crash frequency is concentrated during afternoon and early evening periods, while several LGAs recorded comparatively higher proportions of crashes involving drivers aged 18–25. Together, these findings indicate that both temporal and geographic context may provide useful information when assessing motor insurance risk.
+
+# Recommendations
+
+Based on the findings, RACV may benefit from incorporating time-of-day and geographic risk indicators alongside driver age when assessing premium loading decisions. Rather than relying solely on age-based assumptions, insurers may achieve more targeted and evidence-based underwriting by considering contextual factors associated with elevated crash involvement. Future analysis may also benefit from incorporating traffic exposure measures or behavioural indicators to improve risk assessment accuracy.
+
+# References
