@@ -33,7 +33,7 @@ This report investigates how crash severity and young-driver involvement vary by
 #| label: setup
 #| warning: false
 #| message: false
-
+#| echo: false
 library(tidyverse)
 library(knitr)
 
@@ -70,11 +70,81 @@ n_crashes <- nrow(crashes)
 yd_rate   <- round(mean(crashes$young_driver) * 100, 1)
 ```
 
-\<-- Methodology part here (300 words) --\> Also need to include figure or table as assignment requirement
+## Methodology
+
+```{r}
+#| echo: false
+#| label: fig-severity-overview
+#| fig-cap: "Crash severity composition in the cleaned Victorian road crash dataset, 2018–2024."
+
+crashes |>
+  count(SEVERITY) |>
+  ggplot(aes(x = SEVERITY, y = n)) +
+  geom_col() +
+  labs(
+    x = "Crash severity",
+    y = "Number of crashes"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| echo: false
+#| label: tbl-data-summary
+#| tbl-cap: "Summary of key variables used in the analysis."
+
+key_variable_summary <- tibble::tribble(
+  ~Variable, ~Role_in_analysis,
+  "SEVERITY", "Crash outcome category used to compare fatal, serious injury, and other injury crashes.",
+  "hour", "Derived from accident time and used to analyse time-of-day crash patterns.",
+  "LGA_NAME", "Used to compare geographic variation across Local Government Areas.",
+  "DTP_REGION", "Used for broad regional comparison across Victoria.",
+  "young_driver", "Binary indicator showing whether a crash involved at least one driver aged 18–25."
+)
+
+knitr::kable(key_variable_summary)
+```
+
+Victorian Road Crash Data was obtained from the Victorian Department of Transport and Planning and filtered to include crashes occurring between 1 January 2018 and 31 December 2024. The dataset contains information on crash severity, location, road conditions, vehicle involvement, and demographic indicators relevant to motor insurance risk assessment. Data preparation involved removing non-injury accident records and excluding entries associated with the discontinued “Metropolitan South East Region” category to improve consistency across regional comparisons. Placeholder values, such as unknown speed zones, were recoded as missing values, while additional analytical variables were constructed, including crash hour and a binary indicator of young-driver involvement, defined as crashes involving at least one driver aged 18–25. Crash severity was also recoded into an ordered factor comprising Fatal, Serious injury, and Other injury categories.
+
+As shown in @fig-severity-overview, the cleaned dataset was first examined according to crash severity composition to understand the crash outcomes included in the analysis. Table @tbl-data-summary summarises the key variables used to investigate temporal and geographic crash patterns. The Results section then examines time-of-day crash patterns and Local Government Area variation in young-driver crash involvement to support RACV motor underwriting decisions.
 
 # Results
 
-\<-- results-temporal part here –\>
+## Temporal Crash Patterns
+
+```{r}
+#| echo: false
+#| label: fig-temporal-patterns
+#| fig-cap: "Crash frequency by hour of day and severity in Victoria, 2018–2024."
+
+hourly_crashes <- crashes |>
+  count(hour, SEVERITY) |>
+  complete(
+    hour = 0:23,
+    SEVERITY,
+    fill = list(n = 0)
+  )
+
+ggplot(
+  hourly_crashes,
+  aes(x = hour, y = n, colour = SEVERITY)
+) +
+  geom_line(linewidth = 1) +
+  scale_x_continuous(
+    breaks = seq(0, 23, by = 2)
+  ) +
+  labs(
+    x = "Hour of day",
+    y = "Number of crashes",
+    colour = "Crash severity"
+  ) +
+  theme_minimal()
+```
+
+As shown in \@fig-temporal-patterns, crash frequency varied considerably across the day between 2018 and 2024. Crashes involving all severity levels generally increased during morning commuting hours, followed by a more pronounced rise during the afternoon and early evening period. The highest concentration of crashes occurred between approximately 3:00 pm and 5:00 pm, while crash frequency was substantially lower during early morning hours between 3:00 am and 5:00 am.
+
+Other injury crashes consistently represented the largest category across all hours, while serious injury and fatal crashes remained comparatively less frequent. However, serious and fatal crashes still followed a similar temporal pattern, with increased activity during peak travel periods. These findings suggest that time of day may be an important contextual factor for underwriting decisions, particularly during periods of higher traffic exposure when crash frequency increases substantially.
 
 ## Geographic results for young-driver crash analysis
 
@@ -117,4 +187,4 @@ ggplot(
 
 ```
 
-As shown in \@fig-young-driver-lga, young-driver crash involvement varied across Victorian Local Government Areas (LGAs) between 2018 and 2024. Hume recorded the highest proportion of crashes involving drivers aged 18 - 25, followed by Corangamite, Casey, and Melton, with young-driver involvement rates exceeding 30% of total crashes. Several outer metropolitan LGAs, including Casey, Whittlesea, and Wyndham, also appeared among the highest-ranked areas, suggesting elevated exposure or behavioural risk among younger drivers in growth corridors. However, differences between LGAs were relatively modest, indicating that elevated young-driver involvement is a widespread issue rather than being isolated to only a few regions. From an underwriting perspective, these findings suggest that geographic variation may provide useful contextual information for premium loading decisions, particularly when combined with driver age and time-of-day risk indicators.
+As shown in \@fig-young-driver-lga, young-driver crash involvement varied across Victorian Local Government Areas (LGAs) between 2018 and 2024. Hume recorded the highest proportion of crashes involving drivers aged 18–25, followed by Corangamite, Casey, and Melton, with young-driver involvement rates exceeding 30% of total crashes. Several outer metropolitan LGAs, including Casey, Whittlesea, and Wyndham, also appeared among the highest-ranked areas, indicating geographic variation in crashes involving young drivers. However, differences between LGAs were relatively modest, suggesting that elevated young-driver involvement occurs across multiple regions rather than being isolated to a small number of areas. From an underwriting perspective, these findings indicate that geographic context may provide useful supporting information for premium loading decisions when considered alongside driver age and temporal crash risk indicators.
