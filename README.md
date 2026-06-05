@@ -7,7 +7,7 @@
 
 ## Topic
 **Research question: "How do crash severity and young-driver
-involvement vary by time-of-day and LGA across post-COVID Victoria?"]**
+involvement vary by time-of-day and LGA across post-COVID Victoria?"**
 
 Framed for an **RACV Insurance underwriting analyst** deciding on
 premium loading by driver age, region, and time-of-day risk.
@@ -19,3 +19,12 @@ premium loading by driver age, region, and time-of-day risk.
 - Direct CSV: https://opendata.transport.vic.gov.au/dataset/bb77800e-1857-4edc-bf9e-e188437a1c8e/resource/5df1f373-0c90-48f5-80e1-7b2a35507134/download/victorian_road_crash_data.csv
 - Filter: 01-01-2018 to 12-31-2024 (99,330 crashes, 52 columns)
 - File: `data/victorian_road_crash_data_2018-2024.csv`
+
+## Team Contributions
+
+| Team Member        | Primary Responsibilities                                                                                                                                                                                     |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Prashorst Meas** | Data cleaning, exploratory data analysis (EDA), visualisation support, README documentation, reproducibility setup and interpretation of findings.                                                                         |
+| **Min Khant Aung** | Project coordination, GitHub repository management, report integration, analysis framing, and interpretation for RACV underwriting context. |
+| **Urvi Joshi**     |                                                                                                                                                                                                              |
+
