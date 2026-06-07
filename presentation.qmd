@@ -1,0 +1,23 @@
+---
+title: "Where and When Young Drivers Crash"
+subtitle: "Targeting Motor Premium Loadings Across Post-COVID Victoria — a report for RACV motor underwriting"
+author:
+  - "Prashorst Meas"
+  - "Min Khant Aung"
+  - "Urvi Joshi"
+date: today
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    transition: fade
+    fig-width: 9
+    fig-height: 4.5
+    fig-align: center
+    code-fold: false
+bibliography: references.bib
+execute:
+  echo: false
+  warning: false
+  message: false
+---
