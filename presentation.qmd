@@ -1,0 +1,184 @@
+---
+title: "Where and When Young Drivers Crash"
+subtitle: "Targeting Motor Premium Loadings Across Post-COVID Victoria — a report for RACV motor underwriting"
+author:
+  - "Prashorst Meas"
+  - "Min Khant Aung"
+  - "Urvi Joshi"
+date: today
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    transition: fade
+    fig-width: 9
+    fig-height: 4.5
+    fig-align: center
+    code-fold: false
+bibliography: references.bib
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(knitr)
+
+# Load the data (filtered to 2018-2024) -- same source path as the report,
+# so this deck is reproducible from the same repo.
+crashes_raw <- read_csv(
+  "data/victorian_road_crash_data_2018-2024.csv",
+  show_col_types = FALSE
+)
+
+# Cleaning pipeline (identical to the report's Methodology section):
+# drop two artefact categories, recode placeholders to NA, type the variables.
+crashes <- crashes_raw |>
+  filter(
+    SEVERITY != "Non injury accident",
+    is.na(DTP_REGION) | DTP_REGION != "METROPOLITAN SOUTH EAST REGION"
+  ) |>
+  mutate(
+    hour         = as.integer(sub(":.*", "", ACCIDENT_TIME)),
+    SPEED_ZONE   = SPEED_ZONE |> as.character() |> na_if("Not known") |> as.integer(),
+    young_driver = YOUNG_DRIVER_18_25 > 0,
+    SEVERITY = factor(
+      SEVERITY,
+      levels = c("Fatal accident", "Serious injury accident", "Other injury accident"),
+      labels = c("Fatal", "Serious injury", "Other injury"),
+      ordered = TRUE
+    )
+  )
+
+# Sanity check (matches the report)
+stopifnot(nrow(crashes) == 99325L)
+
+# Values used inline on the slides
+n_crashes <- nrow(crashes)
+yd_rate   <- round(mean(crashes$young_driver) * 100, 1)
+```
+
+## The problem
+
+-   Road crashes are a major safety **and financial** concern across Victoria.
+-   Young drivers (18–25) are treated as a higher-risk group — but age alone is a blunt instrument.
+-   COVID-19 shifted travel patterns, so **where** and **when** crashes happen may have changed.
+
+::: fragment
+**Question:** How do crash severity and young-driver involvement vary by **time of day** and **Local Government Area (LGA)** in post-COVID Victoria — and what does that mean for RACV premium loading?
+:::
+
+## The dataset
+
+-   **Source:** Victorian Road Crash Data, Dept. of Transport & Planning [@viccrashdata].
+-   **Period:** 1 Jan 2018 – 31 Dec 2024.
+-   After cleaning: **`r format(n_crashes, big.mark = ",")` crashes** analysed.
+-   Key fields: crash severity, hour of day, LGA, region, and young-driver involvement.
+
+```{r}
+#| label: tbl-data-summary
+#| tbl-cap: "Key variables used in the analysis."
+
+tibble::tribble(
+  ~Variable, ~`Role in analysis`,
+  "SEVERITY",     "Fatal / Serious injury / Other injury outcome category.",
+  "hour",         "Derived from accident time; time-of-day patterns.",
+  "LGA_NAME",     "Geographic variation across Local Government Areas.",
+  "young_driver", "Whether a crash involved a driver aged 18–25."
+) |>
+  kable()
+```
+
+## Methods
+
+-   **Cleaning:** removed non-injury records and the discontinued *Metropolitan South East Region*; recoded unknown speed zones to missing.
+-   **Derived variables:** crash `hour`, ordered `SEVERITY` factor, binary `young_driver` flag (≥1 driver aged 18–25).
+-   **Analysis:** descriptive comparison of crash frequency by hour and severity, and young-driver involvement **rates** by LGA (LGAs with ≥100 crashes).
+-   Fully reproducible in Quarto — every figure on the following slides is regenerated from the source CSV.
+
+## Results — crash severity composition
+
+```{r}
+#| label: fig-severity-overview
+#| fig-cap: "Crash severity composition, 2018–2024."
+
+crashes |>
+  count(SEVERITY) |>
+  ggplot(aes(x = SEVERITY, y = n)) +
+  geom_col(fill = "steelblue") +
+  labs(x = "Crash severity", y = "Number of crashes") +
+  theme_minimal(base_size = 16)
+```
+
+-   *Other injury* crashes dominate; fatal crashes are comparatively rare.
+
+## Results — when crashes happen
+
+```{r}
+#| label: fig-temporal-patterns
+#| fig-cap: "Crash frequency by hour of day and severity, 2018–2024."
+
+crashes |>
+  count(hour, SEVERITY) |>
+  complete(hour = 0:23, SEVERITY, fill = list(n = 0)) |>
+  ggplot(aes(x = hour, y = n, colour = SEVERITY)) +
+  geom_line(linewidth = 1) +
+  scale_x_continuous(breaks = seq(0, 23, by = 2)) +
+  labs(x = "Hour of day", y = "Number of crashes", colour = "Crash severity") +
+  theme_minimal(base_size = 16)
+```
+
+-   Crashes peak in the **afternoon/early evening (\~3–5 pm)**; lowest 3–5 am.
+-   All severity levels follow the same daily rhythm.
+
+## Results — where young drivers crash
+
+```{r}
+#| label: fig-young-driver-lga
+#| fig-cap: "Top 10 LGAs by young-driver crash involvement rate, 2018–2024."
+
+crashes |>
+  filter(!is.na(LGA_NAME)) |>
+  group_by(LGA_NAME) |>
+  summarise(
+    total_crashes        = n(),
+    young_driver_crashes = sum(young_driver),
+    young_driver_rate    = young_driver_crashes / total_crashes,
+    .groups = "drop"
+  ) |>
+  filter(total_crashes >= 100) |>
+  arrange(desc(young_driver_rate)) |>
+  slice_head(n = 10) |>
+  ggplot(aes(x = reorder(LGA_NAME, young_driver_rate), y = young_driver_rate)) +
+  geom_col(fill = "darkorange") +
+  coord_flip() +
+  scale_y_continuous(labels = scales::percent_format()) +
+  labs(x = "Local Government Area", y = "Young-driver involvement rate") +
+  theme_minimal(base_size = 16)
+```
+
+-   **Hume** highest, then Corangamite, Casey, Melton (\>30%); spread is moderate, not concentrated.
+
+## Key findings & limitations
+
+-   **Time of day** is a meaningful exposure signal — risk concentrates in peak travel hours.
+-   **Geography** adds context: several outer-metro/regional LGAs run higher on young-driver involvement.
+-   Variation between LGAs is **moderate**, not extreme — a supporting factor, not a standalone one.
+-   **Limitation:** no exposure data (km travelled) or behavioural measures, so no causal claims.
+
+## Conclusions & recommendations
+
+-   Crash risk concentrates in **afternoon/early-evening** hours; young-driver involvement is **unevenly distributed** across LGAs (modest differences).
+-   Both **temporal** and **geographic** context add useful information beyond driver age alone.
+-   **Recommendation:** incorporate time-of-day and geographic indicators *alongside* age in premium loading — moving toward targeted, evidence-based underwriting.
+-   **Future work:** add traffic-exposure and behavioural measures to sharpen risk estimates.
+
+## References
+
+::: {#refs}
+:::
